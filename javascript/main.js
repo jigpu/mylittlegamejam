@@ -53,6 +53,11 @@ function Building(x, y) {
 function Grenade(x, y) {
 	this.x = x;
 	this.y = y;
+	this.y_dest = Math.random() * HEIGHT;
+	this.y_sp_toss = -3;
+	this.x_sp_toss = 3 * Math.random();
+	this.detonated = false;
+
 	this.image = [gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_01.png"), [32, 32]),
 	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_02.png"), [32, 32]),
 	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_03.png"), [32, 32]),
@@ -60,6 +65,8 @@ function Grenade(x, y) {
 	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_05.png"), [32, 32]),
 	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_06.png"), [32, 32])
 	             ];
+	this.crater = gamejs.transform.scale(gamejs.image.load("resources/cottage0.png"), [64,64]);
+
 	this.delay = 90;
 	this.movetime = 0;
 
@@ -69,13 +76,24 @@ function Grenade(x, y) {
 	}
 
 	this.draw = function (surface) {
-		surface.blit(this.image[this.getframe()], [this.x, this.y]);
+		var image = this.image[this.getframe()]
+		if (this.detonated)
+			image = this.crater;
+
+		surface.blit(image, [this.x, this.y]);
 	}
 
 	this.update = function(msDuration) {
-		this.movetime = this.movetime + msDuration;
-	}
-	
+		if (!this.detonated) {
+			this.movetime = this.movetime + msDuration;
+			var y_speed = this.y_sp_toss + (this.movetime * 0.001);
+			this.y = this.y + y_speed;
+			this.x = this.x + this.x_sp_toss;
+
+			if (this.y > this.y_dest)
+				this.detonated = true;
+		}
+	}	
 }
 
 /**
@@ -107,6 +125,8 @@ function Discord(stage) {
 	this.update = function(msDuration) {
 		if (this.grenade != null)
 			this.grenade.update(msDuration);
+		if (this.grenade.detonated)
+			this.toss();
 	}
 }
 
