@@ -19,17 +19,18 @@ function Building(x, y) {
 	this.y = y;
 	this.width = 64;
 	this.height = 64;
-	this.image = gamejs.image.load("resources/cottage1.png")
-
-	var dims = this.image.getSize();
-	dims[0] = dims[0] * 0.5;
-	dims[1] = dims[1] * 0.5;
-	this.image = gamejs.transform.scale(this.image, dims);
+	this.image = gamejs.transform.scale(gamejs.image.load("resources/cottage1.png"), [this.width, this.height]);
+	this.hp = 1;
 
 	this.draw = function(surface) {
 		//var rect = new gamejs.Rect(this.x, this.y, this.width, this.height)
 		//gamejs.draw.rect(surface, this.color, rect, 0);
 		surface.blit(this.image, [this.x, this.y]);
+	}
+
+	this.destroy = function() {
+		this.hp = 0;
+		this.image = gamejs.transform.scale(gamejs.image.load("resources/cottage0.png"), [this.width, this.height]);
 	}
 
 	return this;
@@ -75,7 +76,8 @@ function Discord() {
  *  - Collide with Buildings present on the Stage.
  *  - Produce Dragons Breath when the spacebar is pressed
  */
-function Player() {
+function Player(stage) {
+	this.stage = stage;
 	this.x = 100;
 	this.y = 50;
 	this.x_speed = 0;
@@ -90,7 +92,6 @@ function Player() {
 
 	this.getframe = function() {
 		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
-		gamejs.log(this.time, frame);
 		return frame;
 	}
 
@@ -110,6 +111,11 @@ function Player() {
 				case gamejs.event.K_RIGHT: this.x_speed = speed; break;
 				case gamejs.event.K_UP:    this.y_speed = -speed; break;
 				case gamejs.event.K_DOWN:  this.y_speed = speed;  break;
+
+				case gamejs.event.K_TAB:
+					if (event.type === gamejs.event.KEY_DOWN)
+						this.stage.destroy();
+					break;
 				default:
 			}
 		}
@@ -131,15 +137,21 @@ function Player() {
  *
  * DONE:
  *  - Populate with Player
+ *  - Populate with Buildings
  *
  * TODO:
- *  - Populate with Discord and Buildings
+ *  - Populate with Discord
  */
 function Stage() {
 	this.color = "#FFFFFF";
-	this.player = new Player();
+	this.player = new Player(this);
 	this.buildings = [new Building(470,300), new Building(250,400), new Building(180, 325),
 	                  new Building(500,400), new Building(38, 350), new Building(575, 275)];
+
+	this.destroy = function(event) {
+		var i = Math.floor(Math.random()*this.buildings.length);
+		this.buildings[i].destroy();
+	}
 
 	this.notify = function(event) {
 		this.player.notify(event);
@@ -175,6 +187,6 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/cottage1.png", "resources/spike_run_N_01.png", "resources/spike_run_N_02.png",
-"resources/spike_run_N_03.png", "resources/spike_run_N_04.png"]);
+gamejs.preload(["resources/cottage0.png", "resources/cottage1.png", "resources/spike_run_N_01.png",
+ "resources/spike_run_N_02.png", "resources/spike_run_N_03.png", "resources/spike_run_N_04.png"]);
 gamejs.ready(main);
