@@ -50,7 +50,32 @@ function Building(x, y) {
  *    make a detonation animation and finds nearby Buildings on the Stage
  *    to damage.
  */
-function Grenade() {
+function Grenade(x, y) {
+	this.x = x;
+	this.y = y;
+	this.image = [gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_01.png"), [32, 32]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_02.png"), [32, 32]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_03.png"), [32, 32]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_04.png"), [32, 32]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_05.png"), [32, 32]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_06.png"), [32, 32])
+	             ];
+	this.delay = 90;
+	this.movetime = 0;
+
+	this.getframe = function() {
+		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
+		return frame;
+	}
+
+	this.draw = function (surface) {
+		surface.blit(this.image[this.getframe()], [this.x, this.y]);
+	}
+
+	this.update = function(msDuration) {
+		this.movetime = this.movetime + msDuration;
+	}
+	
 }
 
 /**
@@ -62,8 +87,27 @@ function Grenade() {
  *  - Start a worker thread which causes him to periodically throw
  *    a new Grenade.
  */
-function Discord() {
+function Discord(stage) {
+	this.stage = stage;
+	this.x = 50;
+	this.y = 50;
+	this.grenade = null;
 
+	this.toss = function() {
+		this.grenade = new Grenade(this.x, this.y);
+	}
+
+	this.draw = function(surface) {
+		var rect = new gamejs.Rect(this.x, this.y, 75, 125)
+		gamejs.draw.rect(surface, "#00AAFF", rect, 0);
+
+		this.grenade.draw(surface);
+	}
+
+	this.update = function(msDuration) {
+		if (this.grenade != null)
+			this.grenade.update(msDuration);
+	}
 }
 
 /**
@@ -102,7 +146,7 @@ function Player(stage) {
 
 	this.notify = function(event) {
 		if (event.type === gamejs.event.KEY_UP || event.type === gamejs.event.KEY_DOWN) {
-			var speed = 10;
+			var speed = 0.1;
 			if (event.type === gamejs.event.KEY_UP)
 				speed = 0;
 
@@ -122,8 +166,8 @@ function Player(stage) {
 	}
 
 	this.update = function(msDuration) {
-		this.x = this.x + this.x_speed;
-		this.y = this.y + this.y_speed;
+		this.x = Math.round(this.x + this.x_speed * msDuration);
+		this.y = Math.round(this.y + this.y_speed * msDuration);
 
 		if (this.x_speed != 0 || this.y_speed != 0)
 			this.movetime = this.movetime + msDuration;
@@ -145,8 +189,11 @@ function Player(stage) {
 function Stage() {
 	this.color = "#FFFFFF";
 	this.player = new Player(this);
+	this.discord = new Discord(this);
 	this.buildings = [new Building(470,300), new Building(250,400), new Building(180, 325),
 	                  new Building(500,400), new Building(38, 350), new Building(575, 275)];
+
+	this.discord.toss();
 
 	this.destroy = function(event) {
 		var i = Math.floor(Math.random()*this.buildings.length);
@@ -159,10 +206,12 @@ function Stage() {
 
 	this.update = function(msDuration) {
 		this.player.update(msDuration);
+		this.discord.update(msDuration);
 	}
 
 	this.draw = function(surface) {
 		surface.fill(this.color);
+		this.discord.draw(surface);
 		for (var i = 0; i < this.buildings.length; i++)
 			this.buildings[i].draw(surface);
 		this.player.draw(surface);
@@ -187,6 +236,8 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/cottage0.png", "resources/cottage1.png", "resources/spike_run_N_01.png",
+gamejs.preload(["resources/milk_grenade_01.png", "resources/milk_grenade_02.png", "resources/milk_grenade_03.png",
+"resources/milk_grenade_04.png", "resources/milk_grenade_05.png", "resources/milk_grenade_06.png",
+"resources/cottage0.png", "resources/cottage1.png", "resources/spike_run_N_01.png",
  "resources/spike_run_N_02.png", "resources/spike_run_N_03.png", "resources/spike_run_N_04.png"]);
 gamejs.ready(main);
