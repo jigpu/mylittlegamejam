@@ -80,9 +80,23 @@ function Player() {
 	this.y = 50;
 	this.x_speed = 0;
 	this.y_speed = 0;
+	this.image = [gamejs.transform.scale(gamejs.image.load("resources/spike_run_N_01.png"), [48, 48]),
+	              gamejs.transform.scale(gamejs.image.load("resources/spike_run_N_02.png"), [48, 48]),
+	              gamejs.transform.scale(gamejs.image.load("resources/spike_run_N_03.png"), [48, 48]),
+	              gamejs.transform.scale(gamejs.image.load("resources/spike_run_N_04.png"), [48, 48])
+	             ];
+	this.delay = 50;
+	this.movetime = 0;
+
+	this.getframe = function() {
+		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
+		gamejs.log(this.time, frame);
+		return frame;
+	}
 
 	this.draw = function (surface) {
-		gamejs.draw.circle(surface, "#00AAFF", [this.x,this.y], 50, 0);
+		//gamejs.draw.circle(surface, "#00AAFF", [this.x,this.y], 50, 0);
+		surface.blit(this.image[this.getframe()], [this.x, this.y]);
 	}
 
 	this.notify = function(event) {
@@ -104,6 +118,9 @@ function Player() {
 	this.update = function(msDuration) {
 		this.x = this.x + this.x_speed;
 		this.y = this.y + this.y_speed;
+
+		if (this.x_speed != 0 || this.y_speed != 0)
+			this.movetime = this.movetime + msDuration;
 	}
 
 	return this;
@@ -158,5 +175,6 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/cottage1.png"]);
+gamejs.preload(["resources/cottage1.png", "resources/spike_run_N_01.png", "resources/spike_run_N_02.png",
+"resources/spike_run_N_03.png", "resources/spike_run_N_04.png"]);
 gamejs.ready(main);
