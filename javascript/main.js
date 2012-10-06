@@ -14,7 +14,25 @@ var HEIGHT = 480
  *  - Implement a "destroy" function to update variables, collision mask,
  *    etc. when the building's HP has reached zero.
  */
-function Building() {
+function Building(x, y) {
+	this.x = x;
+	this.y = y;
+	this.width = 64;
+	this.height = 64;
+	this.image = gamejs.image.load("resources/cottage1.png")
+
+	var dims = this.image.getSize();
+	dims[0] = dims[0] * 0.5;
+	dims[1] = dims[1] * 0.5;
+	this.image = gamejs.transform.scale(this.image, dims);
+
+	this.draw = function(surface) {
+		//var rect = new gamejs.Rect(this.x, this.y, this.width, this.height)
+		//gamejs.draw.rect(surface, this.color, rect, 0);
+		surface.blit(this.image, [this.x, this.y]);
+	}
+
+	return this;
 }
 
 /**
@@ -108,6 +126,8 @@ function Player() {
 function Stage() {
 	this.color = "#FFFFFF";
 	this.player = new Player();
+	this.buildings = [new Building(470,300), new Building(250,400), new Building(180, 325),
+	                  new Building(500,400), new Building(38, 350), new Building(575, 275)];
 
 	this.notify = function(event) {
 		this.player.notify(event);
@@ -119,6 +139,8 @@ function Stage() {
 
 	this.draw = function(surface) {
 		surface.fill(this.color);
+		for (var i = 0; i < this.buildings.length; i++)
+			this.buildings[i].draw(surface);
 		this.player.draw(surface);
 	}
 }
@@ -141,5 +163,5 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-// gamejs.preload([]);
+gamejs.preload(["resources/cottage1.png"]);
 gamejs.ready(main);
