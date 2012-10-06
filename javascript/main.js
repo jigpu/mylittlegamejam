@@ -86,23 +86,18 @@ function Player() {
 	}
 
 	this.notify = function(event) {
-		if (event.type === gamejs.event.KEY_UP) {
-			this.x_speed = 0;
-			this.y_speed = 0;
-		}
-		else if (event.type === gamejs.event.KEY_DOWN) {
-			if (event.key === gamejs.event.K_LEFT)
-				this.x_speed = -10;
-			else if (event.key === gamejs.event.K_RIGHT)
-				this.x_speed = 10;
-			else if (event.key === gamejs.event.K_UP)
-				this.y_speed = -10;
-			else if (event.key === gamejs.event.K_DOWN)
-				this.y_speed = 10;
-		}
-		else if (event.type === gamejs.event.MOUSE_MOTION) {
-			this.x = event.pos[0];
-			this.y = event.pos[1];
+		if (event.type === gamejs.event.KEY_UP || event.type === gamejs.event.KEY_DOWN) {
+			var speed = 10;
+			if (event.type === gamejs.event.KEY_UP)
+				speed = 0;
+
+			switch (event.key) {
+				case gamejs.event.K_LEFT:  this.x_speed = -speed;  break;
+				case gamejs.event.K_RIGHT: this.x_speed = speed; break;
+				case gamejs.event.K_UP:    this.y_speed = -speed; break;
+				case gamejs.event.K_DOWN:  this.y_speed = speed;  break;
+				default:
+			}
 		}
 	}
 
