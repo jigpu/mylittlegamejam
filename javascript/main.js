@@ -65,9 +65,10 @@ function Building(x, y) {
  *    make a detonation animation and finds nearby Buildings on the Stage
  *    to damage.
  */
-function Grenade(x, y) {
+function Grenade(x, y, difficulty) {
 	this.x = x;
 	this.y = y;
+	this.difficulty = difficulty;
 	this.size = 0.025;
 	this.crater_size = 0.1;
 	this.y_dest = (Math.random() * 0.5) + 0.48
@@ -105,9 +106,10 @@ function Grenade(x, y) {
 	this.update = function(msDuration) {
 		if (!this.detonated) {
 			this.movetime = this.movetime + msDuration;
-			var y_speed = this.y_sp_toss + (this.movetime * 0.001/480);
+			var y_speed = this.y_sp_toss + (this.movetime * 0.001/480 * this.difficulty);
+			var x_speed = this.x_sp_toss + this.difficulty/1000;
 			this.y = this.y + y_speed;
-			this.x = this.x + this.x_sp_toss;
+			this.x = this.x + x_speed;
 
 			if (this.y > this.y_dest)
 				this.detonated = true;
@@ -136,11 +138,13 @@ function Discord(stage) {
 	this.image = loadImages(["resources/throne_00.png", "resources/throne_01.png",
 	                         "resources/throne_02.png", "resources/throne_03.png"],
 	                        [getX(this.size), getX(this.size)]);
+	this.difficulty = 1.0;
 
 	this.cloud = new Cloud(this.x - 20/640, this.y - 20/480);
 
 	this.toss = function() {
-		this.grenade.push(new Grenade(this.x+60/640, this.y+35/480));
+		//this.difficulty *= 1.1;
+		this.grenade.push(new Grenade(this.x+45/640, this.y+35/480, this.difficulty));
 	}
 
 	this.draw = function(surface) {
