@@ -201,15 +201,15 @@ function Discord(stage) {
 		if (this.grenade.length == 0 || this.movetime > this.nextnade) {
 			if (this.renderimage == this.image[0]) {
 				this.renderimage = this.image[1];
-				this.waittime = this.movetime + (1000 / this.difficulty) + 100;
+				this.waittime = this.movetime + (1000 / this.difficulty) + Math.random() * 100;
 			}
 			else if (this.renderimage == this.image[1] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[2];
-				this.waittime = this.movetime + (1500 / this.difficulty) + 150;
+				this.waittime = this.movetime + (1500 / this.difficulty) + Math.random() * 150;
 			}
 			else if (this.renderimage == this.image[2] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[3];
-				this.waittime = this.movetime + (500 / this.difficulty) + 50;
+				this.waittime = this.movetime + (500 / this.difficulty) + Math.random() * 50;
 				this.toss();
 			}
 		}
