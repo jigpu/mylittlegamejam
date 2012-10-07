@@ -161,9 +161,9 @@ function Discord(stage) {
 	this.cloud = new Cloud(this.x - 20/640, this.y - 20/480);
 
 	this.toss = function() {
-		this.difficulty *= 1.1;
 		this.nextnade = this.movetime + Math.random() * 10000 / this.difficulty;
 		this.grenade.push(new Grenade(this.x+90/640, this.y+60/480, this));
+		this.difficulty = Math.log(10+this.grenade.length);
 	}
 
 	this.draw = function(surface) {
@@ -183,15 +183,15 @@ function Discord(stage) {
 		if (this.grenade.length == 0 || this.movetime > this.nextnade) {
 			if (this.renderimage == this.image[0]) {
 				this.renderimage = this.image[1];
-				this.waittime = this.movetime + (1000 / this.difficulty);
+				this.waittime = this.movetime + (1000 / this.difficulty) + 100;
 			}
 			else if (this.renderimage == this.image[1] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[2];
-				this.waittime = this.movetime + (1500 / this.difficulty);
+				this.waittime = this.movetime + (1500 / this.difficulty) + 150;
 			}
 			else if (this.renderimage == this.image[2] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[3];
-				this.waittime = this.movetime + (500 / this.difficulty);
+				this.waittime = this.movetime + (500 / this.difficulty) + 50;
 				this.toss();
 			}
 		}
