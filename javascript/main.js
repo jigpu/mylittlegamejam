@@ -14,9 +14,17 @@ function loadImages(files, size) {
 	var images = [];
 	for (var i = 0; i < files.length; i++) {
 		images[i] = gamejs.transform.scale(gamejs.image.load(files[i]), size);
-		console.log("Loaded " + files[i]);
 	}
 	return images;
+}
+
+function overlaps(a, b, aloc, bloc) {
+	var amask = gamejs.mask.fromSurface(a);
+	var bmask = gamejs.mask.fromSurface(b);
+	var x_offset = getX(aloc[0]) - getX(bloc[0]);
+	var y_offset = getY(aloc[1]) - getY(bloc[1]);
+
+	return bmask.overlap(amask, [x_offset, y_offset]);
 }
 
 
@@ -65,9 +73,10 @@ function Building(x, y) {
  *    make a detonation animation and finds nearby Buildings on the Stage
  *    to damage.
  */
-function Grenade(x, y, difficulty) {
+function Grenade(x, y, difficulty, stage) {
 	this.x = x;
 	this.y = y;
+	this.stage = stage;
 	this.difficulty = difficulty;
 	this.size = 0.025;
 	this.crater_size = 0.1;
@@ -75,6 +84,7 @@ function Grenade(x, y, difficulty) {
 	this.x_sp_toss = 3/640 * Math.random();
 	this.y_sp_toss = -3/480;
 	this.detonated = false;
+	this.destroyed = false;
 
 	this.image = loadImages(["resources/milk_grenade_01.png", "resources/milk_grenade_02.png",
 	                         "resources/milk_grenade_03.png", "resources/milk_grenade_04.png",
@@ -92,7 +102,9 @@ function Grenade(x, y, difficulty) {
 	}
 
 	this.draw = function (surface) {
-		
+		if (this.destroyed)
+			return;
+
 		if (!this.detonated) {
 			var image = this.image[this.getframe()]
 			surface.blit(image, [getX(this.x), getY(this.y)]);
@@ -104,6 +116,9 @@ function Grenade(x, y, difficulty) {
 	}
 
 	this.update = function(msDuration) {
+		if (this.destroyed)
+			this.detonated = true;
+
 		if (!this.detonated) {
 			this.movetime = this.movetime + msDuration;
 			var y_speed = this.y_sp_toss + (this.movetime * 0.001/480 * this.difficulty);
@@ -147,7 +162,7 @@ function Discord(stage) {
 
 	this.toss = function() {
 		//this.difficulty *= 1.1;
-		this.grenade.push(new Grenade(this.x+45/640, this.y+35/480, this.difficulty));
+		this.grenade.push(new Grenade(this.x+45/640, this.y+35/480, this.difficulty, this));
 	}
 
 	this.draw = function(surface) {
@@ -242,6 +257,8 @@ function Player(stage) {
 	this.burninate = false;
 	this.burntime = 0;
 	this.burndelay = 100;
+	this.firex = 0;
+	this.firey = 0;
 
 	this.getframe = function() {
 		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
@@ -259,7 +276,7 @@ function Player(stage) {
 
 	this.draw = function (surface) {
 		if (this.burninate)
-			surface.blit(this.fire[this.getframe_fire()], [getX(this.x), getY(this.y-0.05)]);
+			surface.blit(this.fire[this.getframe_fire()], [getX(this.firex), getY(this.firey)]);
 		surface.blit(this.image[this.getframe()], [getX(this.x), getY(this.y)]);
 	}
 
@@ -290,18 +307,48 @@ function Player(stage) {
 	}
 
 	this.update = function(msDuration) {
-		this.x = this.x + this.x_speed * msDuration;
-		this.y = this.y + this.y_speed * msDuration;
-		if (this.x < 0) this.x = 0;
-		if (this.x + this.size > 1.0) this.x = 1.0 - this.size;
-		if (this.y < 0.4) this.y = 0.4;
-		if (this.y + this.size > 1.0) this.y = 1.0 - this.size;
+		/* Update location */
+		var x = this.x + this.x_speed * msDuration;
+		var y = this.y + this.y_speed * msDuration;
+		if (x < 0) x = 0;
+		if (x + this.size > 1.0) x = 1.0 - this.size;
+		if (y < 0.4) this.y = 0.4;
+		if (y + this.size > 1.0) y = 1.0 - this.size;
 
+		var buildings = this.stage.buildings;
+		for (var i = 0; i < buildings.length; i++) {
+			var building = buildings[i];
+			if (building.hp <= 0)
+				continue;
+
+			if (overlaps(this.image[this.getframe()], building.image,
+			             [this.x, this.y], [building.x, building.y])) {
+				x = this.x;
+				y = this.y;
+			}
+		}
+		this.x = x;
+		this.y = y;
+
+		/* Update speed */
 		if (this.x_speed != 0 || this.y_speed != 0)
 			this.movetime = this.movetime + msDuration;
 
+		/* Handle burnination */
 		if (this.burninate) {
 			this.burntime += msDuration;
+			this.firex = this.x;
+			this.firey = this.y-0.05;
+
+			var nades = this.stage.discord.grenade;
+			var nade = nades[nades.length-1];
+			if (!nade.detonated) {
+				var hit = overlaps(nade.image[nade.getframe()], this.fire[this.getframe_fire()],
+				                   [nade.x, nade.y], [this.firex, this.firey]);
+				if (hit) {
+					nade.destroyed = true;
+				}
+			}
 		}
 		else {
 			this.burntime = 0;
