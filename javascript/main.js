@@ -78,7 +78,7 @@ function Grenade(x, y, difficulty, stage) {
 	this.y = y;
 	this.stage = stage;
 	this.difficulty = difficulty;
-	this.size = 0.025;
+	this.size = 0.02;
 	this.crater_size = 0.1;
 	this.y_dest = (Math.random() * 0.5) + 0.48
 	this.x_sp_toss = 3/640 * Math.random();
@@ -146,9 +146,9 @@ function Grenade(x, y, difficulty, stage) {
  */
 function Discord(stage) {
 	this.stage = stage;
-	this.x = 75/640;
-	this.y = 200/480;
-	this.size = 0.125;
+	this.x = 50/640;
+	this.y = 150/480;
+	this.size = 0.2;
 	this.grenade = [];
 	this.image = loadImages(["resources/throne_00.png", "resources/throne_01.png",
 	                         "resources/throne_02.png", "resources/throne_03.png"],
@@ -162,7 +162,7 @@ function Discord(stage) {
 
 	this.toss = function() {
 		//this.difficulty *= 1.1;
-		this.grenade.push(new Grenade(this.x+45/640, this.y+35/480, this.difficulty, this));
+		this.grenade.push(new Grenade(this.x+90/640, this.y+60/480, this.difficulty, this));
 	}
 
 	this.draw = function(surface) {
@@ -179,18 +179,18 @@ function Discord(stage) {
 		for (var i = 0; i < this.grenade.length; i++) {
 			this.grenade[i].update(msDuration);
 		}
-		if (this.grenade[this.grenade.length-1].detonated) {
+		if (this.grenade.length == 0 || this.grenade[this.grenade.length-1].detonated) {
 			if (this.renderimage == this.image[0]) {
 				this.renderimage = this.image[1];
-				this.waittime = this.movetime + 500;
+				this.waittime = this.movetime + 1000;
 			}
 			else if (this.renderimage == this.image[1] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[2];
-				this.waittime = this.movetime + 1000;
+				this.waittime = this.movetime + 1500;
 			}
 			else if (this.renderimage == this.image[2] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[3];
-				this.waittime = this.movetime + 250;
+				this.waittime = this.movetime + 500;
 				this.toss();
 			}
 		}
@@ -204,7 +204,7 @@ function Discord(stage) {
 function Cloud(x, y) {
 	this.x = x;
 	this.y = y;
-	this.size = 0.1;
+	this.size = 0.15;
 	this.image = loadImages(["resources/cloud_00.png", "resources/cloud_01.png",
 	                         "resources/cloud_02.png", "resources/cloud_03.png",
 	                         "resources/cloud_04.png"],
@@ -375,8 +375,6 @@ function Stage() {
 	this.discord = new Discord(this);
 	this.buildings = [new Building(420/640,275/480), new Building(250/640,400/480), new Building(180/640, 275/480),
 	                  new Building(500/640,400/480), new Building(575/640, 250/480)];
-
-	this.discord.toss();
 
 	this.destroy = function(event) {
 		var i = Math.floor(Math.random()*this.buildings.length);
