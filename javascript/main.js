@@ -183,15 +183,15 @@ function Discord(stage) {
 		if (this.grenade.length == 0 || this.movetime > this.nextnade) {
 			if (this.renderimage == this.image[0]) {
 				this.renderimage = this.image[1];
-				this.waittime = this.movetime + 1000;
+				this.waittime = this.movetime + (1000 / this.difficulty);
 			}
 			else if (this.renderimage == this.image[1] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[2];
-				this.waittime = this.movetime + 1500;
+				this.waittime = this.movetime + (1500 / this.difficulty);
 			}
 			else if (this.renderimage == this.image[2] && this.waittime <= this.movetime) {
 				this.renderimage = this.image[3];
-				this.waittime = this.movetime + 500;
+				this.waittime = this.movetime + (500 / this.difficulty);
 				this.toss();
 			}
 		}
