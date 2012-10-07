@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GameJS Application</title>
-<!-- Styling -->
-    <style type=text/css>
-        body{
-           background:#fff;
-           color:#222;
-           margin:1em 0 2em 6em;
-           padding:0;
-        }
-        #gjs-loader {
-            width: 50%;
-            height: 50%;
-            background: url('./public/ajax-loader.gif');
-        }
-    </style>
-<!-- Start javascript/main.js -->
-    <script src="./public/yabble.js"></script>
-    <script src="./public/gamejs.min.js"></script>
-    <script>
-        require.setModuleRoot('./javascript/');
-        require.run('main')
-    </script>
+<title>Chocolate Milk Attack</title>
+<style type=text/css>
+	body{
+		background:#fff;
+		color:#222;
+		margin:1em 0 2em 6em;
+		padding:0;
+	}
+	#gjs-loader {
+		width: 50%;
+		height: 50%;
+		background: url('./public/ajax-loader.gif');
+	}
+	</style>
+<script src="./public/yabble.js"></script>
+<script src="./public/gamejs.min.js"></script>
+<script>
+	require.setModuleRoot('./javascript/');
+	require.run('main')
+</script>
 </head>
-<!-- Html -->
+
+
 <body>
-    <h1>My Little Gamejam</h1>
-    <div>
-        <div id="gjs-loader">
-         Loading...
-        </div>
-        <canvas id="gjs-canvas" style="border: 1px solid black"></canvas>
-        <p>
-        Powered by <a href="http://gamejs.org">GameJs</a>.
-        </p>
-    </div>
-    <h2>Instructions</h2>
-    <p>Use the arrow keys to move. Press Space to use your Dragon's Breath to
-    destroy the incoming chocolate milk grenades.</p>
+<h1>Chocolate Milk Attack</h1>
+
+<h2>Introduction</h2>
+<p>Ponyville is under attack! Discord, having been recently released and taken over Equestria, is sitting back for a bit to enjoy all the chaos he has created. His beverage of choice for the occasion? Glasses of chocolate milk, fresh from a chocolate rain cloud. Chaotic literrer that he is, Discord tosses remanants behind him as an explosive chocolate milk grenade.</p>
+<p>With Twilight off to gather the others for a second assault with the Elements of Harmony, Princess Celestia herself has tasked you (as the former Rainbow Dash) with ensuring the safety of Ponyville. Though the <i>last</i> thing you want to do is breathe more fire after that little letter-recieving incident earlier, you understand that using its blowtorch-like flame to evaporate the milk before impact is Ponyville's only hope.</p>
+
+<h2>Instructions</h2>
+<p>Use the arrow keys to move. Press Space to use your Dragon's Breath to destroy the incoming chocolate milk grenades before they hit the houses!</p>
+
+<div>
+	<div id="gjs-loader">Loading...</div>
+	<canvas id="gjs-canvas" style="border: 1px solid black"></canvas>
+	<p>Powered by <a href="http://gamejs.org">GameJs</a>.</p>
+</div>
 </body>
 </html>
