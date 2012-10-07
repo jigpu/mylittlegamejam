@@ -118,32 +118,51 @@ function Discord(stage) {
 	              gamejs.transform.scale(gamejs.image.load("resources/throne_02.png"), [96, 96]),
 	              gamejs.transform.scale(gamejs.image.load("resources/throne_03.png"), [96, 96])
 	             ];
-
-	this.cloud = [gamejs.transform.scale(gamejs.image.load("resources/cloud_00.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/cloud_01.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/cloud_02.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/cloud_03.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/cloud_04.png"), [64, 64])
-	             ];
+	this.cloud = new Cloud(this.x - 20, this.y - 20);
 
 	this.toss = function() {
 		this.grenade = new Grenade(this.x+60, this.y+35);
 	}
 
 	this.draw = function(surface) {
-		//var rect = new gamejs.Rect(this.x, this.y, 75, 125)
-		//gamejs.draw.rect(surface, "#00AAFF", rect, 0);
-		this.grenade.draw(surface);
+		this.cloud.draw(surface);
 		var image = this.image[3];
-		surface.blit(this.cloud[0], [this.x - 20, this.y - 20]);
 		surface.blit(image, [this.x, this.y]);
+		this.grenade.draw(surface);
 	}
 
 	this.update = function(msDuration) {
+		this.cloud.update(msDuration);
 		if (this.grenade != null)
 			this.grenade.update(msDuration);
 		if (this.grenade.detonated)
 			this.toss();
+	}
+}
+
+function Cloud(x, y) {
+	this.x = x;
+	this.y = y;
+	this.image = [gamejs.transform.scale(gamejs.image.load("resources/cloud_00.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_01.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_02.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_03.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_04.png"), [64, 64])
+	             ];
+	this.movetime = 0;
+	this.delay = 100;
+
+	this.getframe = function() {
+		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
+		return frame;
+	}
+
+	this.draw = function(surface) {
+		surface.blit(this.image[this.getframe()], [this.x, this.y]);
+	}
+
+	this.update = function(msDuration) {
+		this.movetime = this.movetime + msDuration;
 	}
 }
 
