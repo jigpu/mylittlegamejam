@@ -58,12 +58,12 @@ function Grenade(x, y) {
 	this.x_sp_toss = 3 * Math.random();
 	this.detonated = false;
 
-	this.image = [gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_01.png"), [32, 32]),
-	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_02.png"), [32, 32]),
-	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_03.png"), [32, 32]),
-	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_04.png"), [32, 32]),
-	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_05.png"), [32, 32]),
-	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_06.png"), [32, 32])
+	this.image = [gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_01.png"), [16, 16]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_02.png"), [16, 16]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_03.png"), [16, 16]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_04.png"), [16, 16]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_05.png"), [16, 16]),
+	              gamejs.transform.scale(gamejs.image.load("resources/milk_grenade_06.png"), [16, 16])
 	             ];
 	this.crater = gamejs.transform.scale(gamejs.image.load("resources/cottage0.png"), [64,64]);
 
@@ -100,33 +100,43 @@ function Grenade(x, y) {
  * Class representing the villian in this game. He shouldn't need to be
  * a graphic which periodically spawns Grenades.
  *
- * TODO:
+ * DONE:
  *  - Implement a "draw" function which draws Discord on his throne.
+ *
+ * TODO:
  *  - Start a worker thread which causes him to periodically throw
  *    a new Grenade.
+ *  - Animate Discord and the chocolate milk cloud
  */
 function Discord(stage) {
 	this.stage = stage;
-	this.x = 50;
-	this.y = 50;
+	this.x = 75;
+	this.y = 80;
 	this.grenade = null;
-	this.image = [gamejs.transform.scale(gamejs.image.load("resources/throne_00.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/throne_01.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/throne_02.png"), [64, 64]),
-	              gamejs.transform.scale(gamejs.image.load("resources/throne_03.png"), [64, 64])
+	this.image = [gamejs.transform.scale(gamejs.image.load("resources/throne_00.png"), [96, 96]),
+	              gamejs.transform.scale(gamejs.image.load("resources/throne_01.png"), [96, 96]),
+	              gamejs.transform.scale(gamejs.image.load("resources/throne_02.png"), [96, 96]),
+	              gamejs.transform.scale(gamejs.image.load("resources/throne_03.png"), [96, 96])
+	             ];
+
+	this.cloud = [gamejs.transform.scale(gamejs.image.load("resources/cloud_00.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_01.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_02.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_03.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/cloud_04.png"), [64, 64])
 	             ];
 
 	this.toss = function() {
-		this.grenade = new Grenade(this.x, this.y);
+		this.grenade = new Grenade(this.x+60, this.y+35);
 	}
 
 	this.draw = function(surface) {
 		//var rect = new gamejs.Rect(this.x, this.y, 75, 125)
 		//gamejs.draw.rect(surface, "#00AAFF", rect, 0);
 		this.grenade.draw(surface);
-		var image = this.image[0];
+		var image = this.image[3];
+		surface.blit(this.cloud[0], [this.x - 20, this.y - 20]);
 		surface.blit(image, [this.x, this.y]);
-		
 	}
 
 	this.update = function(msDuration) {
@@ -263,7 +273,9 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/throne_00.png", "resources/throne_01.png", "resources/throne_02.png",
+gamejs.preload(["resources/cloud_00.png", "resources/cloud_01.png", "resources/cloud_02.png", "resources/cloud_03.png",
+"resources/cloud_04.png",
+"resources/throne_00.png", "resources/throne_01.png", "resources/throne_02.png",
 "resources/throne_03.png", "resources/milk_grenade_01.png", "resources/milk_grenade_02.png",
 "resources/milk_grenade_03.png", "resources/milk_grenade_04.png", "resources/milk_grenade_05.png",
 "resources/milk_grenade_06.png", "resources/cottage0.png", "resources/cottage1.png",
