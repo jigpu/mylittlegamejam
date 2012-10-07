@@ -138,6 +138,9 @@ function Discord(stage) {
 	this.image = loadImages(["resources/throne_00.png", "resources/throne_01.png",
 	                         "resources/throne_02.png", "resources/throne_03.png"],
 	                        [getX(this.size), getX(this.size)]);
+	this.renderimage = this.image[0];
+	this.movetime = 0;
+	this.waittime = 0;
 	this.difficulty = 1.0;
 
 	this.cloud = new Cloud(this.x - 20/640, this.y - 20/480);
@@ -149,20 +152,37 @@ function Discord(stage) {
 
 	this.draw = function(surface) {
 		this.cloud.draw(surface);
-		var image = this.image[3];
-		surface.blit(image, [getX(this.x), getY(this.y)]);
+		surface.blit(this.renderimage, [getX(this.x), getY(this.y)]);
 		for (var i = 0; i < this.grenade.length; i++) {
 			this.grenade[i].draw(surface);
 		}
 	}
 
 	this.update = function(msDuration) {
+		this.movetime += msDuration;
 		this.cloud.update(msDuration);
 		for (var i = 0; i < this.grenade.length; i++) {
 			this.grenade[i].update(msDuration);
 		}
-		if (this.grenade[this.grenade.length-1].detonated)
-			this.toss();
+		if (this.grenade[this.grenade.length-1].detonated) {
+			if (this.renderimage == this.image[0]) {
+				this.renderimage = this.image[1];
+				this.waittime = this.movetime + 500;
+			}
+			else if (this.renderimage == this.image[1] && this.waittime <= this.movetime) {
+				this.renderimage = this.image[2];
+				this.waittime = this.movetime + 1000;
+			}
+			else if (this.renderimage == this.image[2] && this.waittime <= this.movetime) {
+				this.renderimage = this.image[3];
+				this.waittime = this.movetime + 250;
+				this.toss();
+			}
+		}
+		if (this.renderimage == this.image[3] && this.waittime <= this.movetime) {
+			this.renderimage = this.image[0];
+			this.waittime = 0;
+		}
 	}
 }
 
