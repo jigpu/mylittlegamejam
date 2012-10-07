@@ -73,11 +73,10 @@ function Building(x, y) {
  *    make a detonation animation and finds nearby Buildings on the Stage
  *    to damage.
  */
-function Grenade(x, y, difficulty, stage) {
+function Grenade(x, y, stage) {
 	this.x = x;
 	this.y = y;
 	this.stage = stage;
-	this.difficulty = difficulty;
 	this.size = 0.02;
 	this.crater_size = 0.1;
 	this.y_dest = (Math.random() * 0.5) + 0.48
@@ -121,8 +120,8 @@ function Grenade(x, y, difficulty, stage) {
 
 		if (!this.detonated) {
 			this.movetime = this.movetime + msDuration;
-			var y_speed = this.y_sp_toss + (this.movetime * 0.001/480 * this.difficulty);
-			var x_speed = this.x_sp_toss + this.difficulty/1000;
+			var y_speed = this.y_sp_toss + (this.movetime * 0.001/480);
+			var x_speed = this.x_sp_toss;
 			this.y = this.y + y_speed;
 			this.x = this.x + x_speed;
 
@@ -157,12 +156,14 @@ function Discord(stage) {
 	this.movetime = 0;
 	this.waittime = 0;
 	this.difficulty = 1.0;
+	this.nadedelay = 0;
 
 	this.cloud = new Cloud(this.x - 20/640, this.y - 20/480);
 
 	this.toss = function() {
-		//this.difficulty *= 1.1;
-		this.grenade.push(new Grenade(this.x+90/640, this.y+60/480, this.difficulty, this));
+		this.difficulty *= 1.1;
+		this.nextnade = this.movetime + Math.random() * 10000 / this.difficulty;
+		this.grenade.push(new Grenade(this.x+90/640, this.y+60/480, this));
 	}
 
 	this.draw = function(surface) {
@@ -179,7 +180,7 @@ function Discord(stage) {
 		for (var i = 0; i < this.grenade.length; i++) {
 			this.grenade[i].update(msDuration);
 		}
-		if (this.grenade.length == 0 || this.grenade[this.grenade.length-1].detonated) {
+		if (this.grenade.length == 0 || this.movetime > this.nextnade) {
 			if (this.renderimage == this.image[0]) {
 				this.renderimage = this.image[1];
 				this.waittime = this.movetime + 1000;
