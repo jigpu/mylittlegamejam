@@ -69,6 +69,7 @@ function Grenade(x, y) {
 	this.x = x;
 	this.y = y;
 	this.size = 0.025;
+	this.crater_size = 0.1;
 	this.y_dest = Math.random();
 	this.x_sp_toss = 3/640 * Math.random();
 	this.y_sp_toss = -3/480;
@@ -79,7 +80,7 @@ function Grenade(x, y) {
 	                         "resources/milk_grenade_05.png", "resources/milk_grenade_06.png"],
 	                        [getX(this.size), getY(this.size)]);
 
-	this.crater = gamejs.transform.scale(gamejs.image.load("resources/cottage0.png"), [64,64]);
+	this.crater = gamejs.transform.scale(gamejs.image.load("resources/cottage0.png"), [getX(this.crater_size), getY(this.crater_size)]);
 
 	this.delay = 90;
 	this.movetime = 0;
@@ -90,11 +91,15 @@ function Grenade(x, y) {
 	}
 
 	this.draw = function (surface) {
-		var image = this.image[this.getframe()]
-		if (this.detonated)
-			image = this.crater;
-
-		surface.blit(image, [getX(this.x), getY(this.y)]);
+		
+		if (!this.detonated) {
+			var image = this.image[this.getframe()]
+			surface.blit(image, [getX(this.x), getY(this.y)]);
+		}
+		else {
+			var image = this.crater;
+			surface.blit(image, [getX(this.x-0.015), getY(this.y-0.025)]);
+		}
 	}
 
 	this.update = function(msDuration) {
