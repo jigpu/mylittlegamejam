@@ -127,7 +127,7 @@ function Discord(stage) {
 	this.x = 75/640;
 	this.y = 80/480;
 	this.size = 0.125;
-	this.grenade = null;
+	this.grenade = [];
 	this.image = loadImages(["resources/throne_00.png", "resources/throne_01.png",
 	                         "resources/throne_02.png", "resources/throne_03.png"],
 	                        [getX(this.size), getX(this.size)]);
@@ -135,21 +135,24 @@ function Discord(stage) {
 	this.cloud = new Cloud(this.x - 20/640, this.y - 20/480);
 
 	this.toss = function() {
-		this.grenade = new Grenade(this.x+60/640, this.y+35/480);
+		this.grenade.push(new Grenade(this.x+60/640, this.y+35/480));
 	}
 
 	this.draw = function(surface) {
 		this.cloud.draw(surface);
 		var image = this.image[3];
 		surface.blit(image, [getX(this.x), getY(this.y)]);
-		this.grenade.draw(surface);
+		for (var i = 0; i < this.grenade.length; i++) {
+			this.grenade[i].draw(surface);
+		}
 	}
 
 	this.update = function(msDuration) {
 		this.cloud.update(msDuration);
-		if (this.grenade != null)
-			this.grenade.update(msDuration);
-		if (this.grenade.detonated)
+		for (var i = 0; i < this.grenade.length; i++) {
+			this.grenade[i].update(msDuration);
+		}
+		if (this.grenade[this.grenade.length-1].detonated)
 			this.toss();
 	}
 }
