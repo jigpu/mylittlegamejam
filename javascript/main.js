@@ -322,17 +322,16 @@ function Player(stage) {
 				continue;
 
 			if (overlaps(this.image[this.getframe()], building.image,
-			             [this.x, this.y], [building.x, building.y])) {
+			             [x, y], [building.x, building.y])) {
 				x = this.x;
 				y = this.y;
 			}
 		}
+
+		if (this.x != x || this.y != y)
+			this.movetime = this.movetime + msDuration;
 		this.x = x;
 		this.y = y;
-
-		/* Update speed */
-		if (this.x_speed != 0 || this.y_speed != 0)
-			this.movetime = this.movetime + msDuration;
 
 		/* Handle burnination */
 		if (this.burninate) {
