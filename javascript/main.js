@@ -70,7 +70,7 @@ function Grenade(x, y) {
 	this.y = y;
 	this.size = 0.025;
 	this.crater_size = 0.1;
-	this.y_dest = Math.random();
+	this.y_dest = (Math.random() * 0.5) + 0.48
 	this.x_sp_toss = 3/640 * Math.random();
 	this.y_sp_toss = -3/480;
 	this.detonated = false;
@@ -130,7 +130,7 @@ function Grenade(x, y) {
 function Discord(stage) {
 	this.stage = stage;
 	this.x = 75/640;
-	this.y = 80/480;
+	this.y = 200/480;
 	this.size = 0.125;
 	this.grenade = [];
 	this.image = loadImages(["resources/throne_00.png", "resources/throne_01.png",
@@ -244,6 +244,10 @@ function Player(stage) {
 	this.update = function(msDuration) {
 		this.x = this.x + this.x_speed * msDuration;
 		this.y = this.y + this.y_speed * msDuration;
+		if (this.x < 0) this.x = 0;
+		if (this.x + this.size > 1.0) this.x = 1.0 - this.size;
+		if (this.y < 0.4) this.y = 0.4;
+		if (this.y + this.size > 1.0) this.y = 1.0 - this.size;
 
 		if (this.x_speed != 0 || this.y_speed != 0)
 			this.movetime = this.movetime + msDuration;
@@ -264,6 +268,8 @@ function Player(stage) {
  */
 function Stage() {
 	this.color = "#FFFFFF";
+	this.image = gamejs.transform.scale(gamejs.image.load("resources/background.png"), [getX(1.0), getY(1.0)]);
+
 	this.player = new Player(this);
 	this.discord = new Discord(this);
 	this.buildings = [new Building(470/640,300/480), new Building(250/640,400/480), new Building(180/640, 325/480),
@@ -286,7 +292,8 @@ function Stage() {
 	}
 
 	this.draw = function(surface) {
-		surface.fill(this.color);
+		//surface.fill(this.color);
+		surface.blit(this.image, [0,0]);
 		this.discord.draw(surface);
 		for (var i = 0; i < this.buildings.length; i++)
 			this.buildings[i].draw(surface);
@@ -312,7 +319,8 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/cloud_00.png", "resources/cloud_01.png", "resources/cloud_02.png", "resources/cloud_03.png",
+gamejs.preload(["resources/background.png",
+"resources/cloud_00.png", "resources/cloud_01.png", "resources/cloud_02.png", "resources/cloud_03.png",
 "resources/cloud_04.png",
 "resources/throne_00.png", "resources/throne_01.png", "resources/throne_02.png",
 "resources/throne_03.png", "resources/milk_grenade_01.png", "resources/milk_grenade_02.png",
