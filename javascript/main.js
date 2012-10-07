@@ -232,15 +232,34 @@ function Player(stage) {
 	this.image = loadImages(["resources/spike_run_N_01.png", "resources/spike_run_N_02.png",
 	                         "resources/spike_run_N_03.png", "resources/spike_run_N_04.png"],
 	                        [getX(this.size), getX(this.size)]);
+	this.fire  = loadImages(["resources/breath_00.png", "resources/breath_01.png",
+	                         "resources/breath_02.png", "resources/breath_03.png",
+	                         "resources/breath_04.png", "resources/breath_05.png"],
+	                        [getX(this.size), getX(this.size)]);
+
 	this.delay = 50;
 	this.movetime = 0;
+	this.burninate = false;
+	this.burntime = 0;
+	this.burndelay = 100;
 
 	this.getframe = function() {
 		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
 		return frame;
 	}
 
+	this.getframe_fire = function() {
+		var frame = Math.floor((this.burntime/this.burndelay));
+		if (frame >= this.fire.length) {
+			frame = this.fire.length - 1;
+			this.burninate = false;
+		}
+		return frame;
+	}
+
 	this.draw = function (surface) {
+		if (this.burninate)
+			surface.blit(this.fire[this.getframe_fire()], [getX(this.x), getY(this.y-0.05)]);
 		surface.blit(this.image[this.getframe()], [getX(this.x), getY(this.y)]);
 	}
 
@@ -260,6 +279,11 @@ function Player(stage) {
 					if (event.type === gamejs.event.KEY_DOWN)
 						this.stage.destroy();
 					break;
+
+				case gamejs.event.K_SPACE:
+					if (event.type === gamejs.event.KEY_DOWN)
+						this.burninate = true;
+					break;
 				default:
 			}
 		}
@@ -275,6 +299,13 @@ function Player(stage) {
 
 		if (this.x_speed != 0 || this.y_speed != 0)
 			this.movetime = this.movetime + msDuration;
+
+		if (this.burninate) {
+			this.burntime += msDuration;
+		}
+		else {
+			this.burntime = 0;
+		}
 	}
 
 	return this;
@@ -343,7 +374,9 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/background.png",
+gamejs.preload(["resources/breath_00.png", "resources/breath_01.png", "resources/breath_02.png", "resources/breath_03.png",
+"resources/breath_04.png", "resources/breath_05.png", 
+"resources/background.png",
 "resources/cloud_00.png", "resources/cloud_01.png", "resources/cloud_02.png", "resources/cloud_03.png",
 "resources/cloud_04.png",
 "resources/throne_00.png", "resources/throne_01.png", "resources/throne_02.png",
