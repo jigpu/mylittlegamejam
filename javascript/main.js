@@ -93,7 +93,7 @@ function Grenade(x, y) {
 			if (this.y > this.y_dest)
 				this.detonated = true;
 		}
-	}	
+	}
 }
 
 /**
@@ -110,16 +110,23 @@ function Discord(stage) {
 	this.x = 50;
 	this.y = 50;
 	this.grenade = null;
+	this.image = [gamejs.transform.scale(gamejs.image.load("resources/throne_00.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/throne_01.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/throne_02.png"), [64, 64]),
+	              gamejs.transform.scale(gamejs.image.load("resources/throne_03.png"), [64, 64])
+	             ];
 
 	this.toss = function() {
 		this.grenade = new Grenade(this.x, this.y);
 	}
 
 	this.draw = function(surface) {
-		var rect = new gamejs.Rect(this.x, this.y, 75, 125)
-		gamejs.draw.rect(surface, "#00AAFF", rect, 0);
-
+		//var rect = new gamejs.Rect(this.x, this.y, 75, 125)
+		//gamejs.draw.rect(surface, "#00AAFF", rect, 0);
 		this.grenade.draw(surface);
+		var image = this.image[0];
+		surface.blit(image, [this.x, this.y]);
+		
 	}
 
 	this.update = function(msDuration) {
@@ -256,8 +263,10 @@ function main() {
 	gamejs.time.fpsCallback(tick, this, 26);
 }
 
-gamejs.preload(["resources/milk_grenade_01.png", "resources/milk_grenade_02.png", "resources/milk_grenade_03.png",
-"resources/milk_grenade_04.png", "resources/milk_grenade_05.png", "resources/milk_grenade_06.png",
-"resources/cottage0.png", "resources/cottage1.png", "resources/spike_run_N_01.png",
- "resources/spike_run_N_02.png", "resources/spike_run_N_03.png", "resources/spike_run_N_04.png"]);
+gamejs.preload(["resources/throne_00.png", "resources/throne_01.png", "resources/throne_02.png",
+"resources/throne_03.png", "resources/milk_grenade_01.png", "resources/milk_grenade_02.png",
+"resources/milk_grenade_03.png", "resources/milk_grenade_04.png", "resources/milk_grenade_05.png",
+"resources/milk_grenade_06.png", "resources/cottage0.png", "resources/cottage1.png",
+"resources/spike_run_N_01.png", "resources/spike_run_N_02.png", "resources/spike_run_N_03.png",
+"resources/spike_run_N_04.png"]);
 gamejs.ready(main);
