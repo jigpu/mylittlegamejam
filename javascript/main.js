@@ -419,7 +419,7 @@ function Stage(shell) {
 		}
 
 		if (gameover) {
-			this.gameover = true;
+			this.shell.screen = new Outro(this.shell, this.playtime);
 		}
 		else {
 			this.playtime += msDuration;
@@ -439,11 +439,58 @@ function Stage(shell) {
 
 		var font = new gamejs.font.Font('2em sans-serif');
 		var millis = this.playtime % 1000;
-		var seconds = Math.floor(this.playtime / 1000) % 60;
+		var seconds = Math.floor(this.playtime / 1000);
 		var text = "You've survived: " + seconds + "." + millis + " seconds";
-		if (this.gameover)
-			text += ". Refresh to play again.";
 		surface.blit(font.render(text), [10, 10]);
+	}
+}
+
+function Outro(shell, time) {
+	this.shell = shell;
+	this.time = time;
+	this.image = gamejs.transform.scale(gamejs.image.load("resources/background.png"), [getX(1.0), getY(1.0)]);
+
+	this.draw = function(surface) {
+		surface.blit(this.image, [0,0]);
+
+		var titlefont = new gamejs.font.Font('5em sans-serif');
+		var titlesurf = titlefont.render("Your Score");
+		var size = titlesurf.getSize();
+		size[0] = getX(0.5) - size[0]/2;
+		size[1] = getY(0.3) - size[1]/2;
+		surface.blit(titlesurf, size);
+
+		var textfont = new gamejs.font.Font('3em sans-serif');
+		var millis = this.time % 1000;
+		var seconds = Math.floor(this.time / 1000);
+		var textsurf = textfont.render(seconds + "." + millis + " seconds");
+		size = textsurf.getSize();
+		size[0] = getX(0.5) - size[0]/2;
+		size[1] = getY(0.5) - size[1]/2;
+		surface.blit(textsurf, size);
+
+		textsurf = textfont.render("Press <ENTER> to Play Again");
+		size = textsurf.getSize();
+		size[0] = getX(0.5) - size[0]/2;
+		size[1] = getY(0.6) - size[1]/2;
+		surface.blit(textsurf, size);
+	}
+
+	this.notify = function(event) {
+		if (event.type != gamejs.event.KEY_DOWN)
+			return;
+
+		switch (event.key) {
+			case gamejs.event.K_ENTER: this.start();  break;
+			default:
+		}
+	}
+
+	this.update = function(msDuration) {
+	}
+
+	this.start = function(msDuration) {
+		this.shell.screen = new Stage(this.shell);
 	}
 }
 
@@ -457,7 +504,6 @@ function Intro(shell) {
 		var titlefont = new gamejs.font.Font('5em sans-serif');
 		var titlesurf = titlefont.render("Chocolate Milk Attack!");
 		var size = titlesurf.getSize();
-		console.log("Size: " + size);
 		size[0] = getX(0.5) - size[0]/2;
 		size[1] = getY(0.3) - size[1]/2;
 		surface.blit(titlesurf, size);
