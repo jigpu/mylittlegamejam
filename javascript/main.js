@@ -35,7 +35,7 @@ function loadImages(files, size) {
 function Building(x, y) {
 	this.x = x;
 	this.y = y;
-	this.size = 0.1;
+	this.size = 0.15;
 	this.image = gamejs.transform.scale(gamejs.image.load("resources/cottage1.png"), [getX(this.size), getX(this.size)]);
 	this.hp = 1;
 
