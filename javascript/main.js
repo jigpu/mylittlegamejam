@@ -1,6 +1,6 @@
 var gamejs = require('gamejs');
-var WIDTH  = 960
-var HEIGHT = 720
+var WIDTH  = 1280
+var HEIGHT = 960
 
 function getX(percent) {
 	return WIDTH*percent;
@@ -388,7 +388,8 @@ function Player(stage) {
  * TODO:
  *  - Populate with Discord
  */
-function Stage() {
+function Stage(shell) {
+	this.shell = shell;
 	this.color = "#FFFFFF";
 	this.image = gamejs.transform.scale(gamejs.image.load("resources/background.png"), [getX(1.0), getY(1.0)]);
 
@@ -446,18 +447,75 @@ function Stage() {
 	}
 }
 
+function Intro(shell) {
+	this.shell = shell;
+	this.image = gamejs.transform.scale(gamejs.image.load("resources/background.png"), [getX(1.0), getY(1.0)]);
+
+	this.draw = function(surface) {
+		surface.blit(this.image, [0,0]);
+
+		var titlefont = new gamejs.font.Font('5em sans-serif');
+		var titlesurf = titlefont.render("Chocolate Milk Attack!");
+		var size = titlesurf.getSize();
+		console.log("Size: " + size);
+		size[0] = getX(0.5) - size[0]/2;
+		size[1] = getY(0.3) - size[1]/2;
+		surface.blit(titlesurf, size);
+
+		var textfont = new gamejs.font.Font('3em sans-serif');
+		var textsurf = textfont.render("Press <ENTER> to Begin");
+		size = textsurf.getSize();
+		size[0] = getX(0.5) - size[0]/2;
+		size[1] = getY(0.6) - size[1]/2;
+		surface.blit(textsurf, size);
+	}
+
+	this.notify = function(event) {
+		if (event.type != gamejs.event.KEY_DOWN)
+			return;
+
+		switch (event.key) {
+			case gamejs.event.K_ENTER: this.start();  break;
+			default:
+		}
+	}
+
+	this.update = function(msDuration) {
+	}
+
+	this.start = function() {
+		this.shell.screen = new Stage(this.shell);
+	}
+}
+
+function Shell() {
+	this.screen = new Intro(this);
+
+	this.draw = function(surface) {
+		this.screen.draw(surface);
+	}
+
+	this.notify = function(event) {
+		this.screen.notify(event);
+	}
+
+	this.update = function(msDuration) {
+		this.screen.update(msDuration);
+	}
+}
+
 
 function main() {
 
 	var display = gamejs.display.setMode([WIDTH, HEIGHT]);
-	var stage = new Stage()
+	var shell = new Shell()
 
 	function tick(msDuration) {
 		var events = gamejs.event.get();
-		events.forEach(function(event) {stage.notify(event)});
+		events.forEach(function(event) {shell.notify(event)});
 
-		stage.update(msDuration);
-		stage.draw(display);
+		shell.update(msDuration);
+		shell.draw(display);
 		return;
 	};
 
