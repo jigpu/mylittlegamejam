@@ -439,7 +439,10 @@ function Stage() {
 		var font = new gamejs.font.Font('2em sans-serif');
 		var millis = this.playtime % 1000;
 		var seconds = Math.floor(this.playtime / 1000) % 60;
-		surface.blit(font.render("You've survived: " + seconds + "." + millis + " seconds"), [10, 10]);
+		var text = "You've survived: " + seconds + "." + millis + " seconds";
+		if (this.gameover)
+			text += ". Refresh to play again.";
+		surface.blit(font.render(text), [10, 10]);
 	}
 }
 
