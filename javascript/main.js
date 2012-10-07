@@ -1,6 +1,6 @@
 var gamejs = require('gamejs');
-var WIDTH  = 640
-var HEIGHT = 480
+var WIDTH  = 1280
+var HEIGHT = 960
 
 function getX(percent) {
 	return WIDTH*percent;
