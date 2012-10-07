@@ -341,12 +341,14 @@ function Player(stage) {
 			this.firey = this.y-0.05;
 
 			var nades = this.stage.discord.grenade;
-			var nade = nades[nades.length-1];
-			if (!nade.detonated) {
-				var hit = overlaps(nade.image[nade.getframe()], this.fire[this.getframe_fire()],
-				                   [nade.x, nade.y], [this.firex, this.firey]);
-				if (hit) {
-					nade.destroyed = true;
+			for (var i = 0; i < nades.length; i++) {
+				var nade = nades[i];
+				if (!nade.detonated) {
+					var hit = overlaps(nade.image[nade.getframe()], this.fire[this.getframe_fire()],
+						           [nade.x, nade.y], [this.firex, this.firey]);
+					if (hit) {
+						nade.destroyed = true;
+					}
 				}
 			}
 		}
