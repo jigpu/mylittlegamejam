@@ -373,8 +373,8 @@ function Stage() {
 
 	this.player = new Player(this);
 	this.discord = new Discord(this);
-	this.buildings = [new Building(470/640,300/480), new Building(250/640,400/480), new Building(180/640, 325/480),
-	                  new Building(500/640,400/480), new Building(38/640, 350/480), new Building(575/640, 275/480)];
+	this.buildings = [new Building(420/640,275/480), new Building(250/640,400/480), new Building(180/640, 275/480),
+	                  new Building(500/640,400/480), new Building(575/640, 250/480)];
 
 	this.discord.toss();
 
