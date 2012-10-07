@@ -202,7 +202,7 @@ function Player(stage) {
 	this.stage = stage;
 	this.x = 0.5;
 	this.y = 0.5;
-	this.size = 48/640;
+	this.size = 32/640;
 	this.x_speed = 0;
 	this.y_speed = 0;
 	this.image = loadImages(["resources/spike_run_N_01.png", "resources/spike_run_N_02.png",
