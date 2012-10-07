@@ -396,6 +396,8 @@ function Stage() {
 	this.discord = new Discord(this);
 	this.buildings = [new Building(420/640,275/480), new Building(250/640,400/480), new Building(180/640, 275/480),
 	                  new Building(500/640,400/480), new Building(575/640, 250/480)];
+	this.playtime = 0;
+	this.gameover = false;
 
 	this.destroy = function(event) {
 		var i = Math.floor(Math.random()*this.buildings.length);
@@ -407,6 +409,21 @@ function Stage() {
 	}
 
 	this.update = function(msDuration) {
+		var gameover = true;
+		for (var i = 0; i < this.buildings.length; i++) {
+			if (this.buildings[i].hp != 0) {
+				gameover = false;
+				break;
+			}
+		}
+
+		if (gameover) {
+			this.gameover = true;
+		}
+		else {
+			this.playtime += msDuration;
+		}
+
 		this.player.update(msDuration);
 		this.discord.update(msDuration);
 	}
@@ -418,6 +435,11 @@ function Stage() {
 		for (var i = 0; i < this.buildings.length; i++)
 			this.buildings[i].draw(surface);
 		this.player.draw(surface);
+
+		var font = new gamejs.font.Font('2em sans-serif');
+		var millis = this.playtime % 1000;
+		var seconds = Math.floor(this.playtime / 1000) % 60;
+		surface.blit(font.render("You've survived: " + seconds + "." + millis + " seconds"), [10, 10]);
 	}
 }
 
