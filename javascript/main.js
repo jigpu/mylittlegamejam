@@ -95,6 +95,24 @@ function Grenade(x, y, stage) {
 	this.delay = 90;
 	this.movetime = 0;
 
+	this.detonate = function() {
+		if (this.detonated)
+			return;
+
+		this.detonated = true;
+
+		for (var i = 0; i < this.stage.buildings.length; i++) {
+			var building = this.stage.buildings[i];
+			if (building.hp == 0)
+				continue;
+			var hit = overlaps(this.crater, building.image,
+			                   [this.x-0.015, this.y-0.025], [building.x, building.y]);
+			if (hit)
+				building.destroy();
+		}
+		this.detonate_done = true;
+	}
+
 	this.getframe = function() {
 		var frame = Math.floor((this.movetime/this.delay)) % this.image.length;
 		return frame;
@@ -126,7 +144,7 @@ function Grenade(x, y, stage) {
 			this.x = this.x + x_speed;
 
 			if (this.y > this.y_dest)
-				this.detonated = true;
+				this.detonate();
 		}
 	}
 }
@@ -162,7 +180,7 @@ function Discord(stage) {
 
 	this.toss = function() {
 		this.nextnade = this.movetime + Math.random() * 10000 / this.difficulty;
-		this.grenade.push(new Grenade(this.x+90/640, this.y+60/480, this));
+		this.grenade.push(new Grenade(this.x+90/640, this.y+60/480, this.stage));
 		this.difficulty = Math.log(10+this.grenade.length);
 	}
 
