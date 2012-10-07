@@ -1,6 +1,6 @@
 var gamejs = require('gamejs');
-var WIDTH  = 1280
-var HEIGHT = 960
+var WIDTH  = 960
+var HEIGHT = 720
 
 function getX(percent) {
 	return WIDTH*percent;
@@ -312,7 +312,7 @@ function Player(stage) {
 		var y = this.y + this.y_speed * msDuration;
 		if (x < 0) x = 0;
 		if (x + this.size > 1.0) x = 1.0 - this.size;
-		if (y < 0.4) this.y = 0.4;
+		if (y < 0.4) y = 0.4;
 		if (y + this.size > 1.0) y = 1.0 - this.size;
 
 		var buildings = this.stage.buildings;
